@@ -11,10 +11,15 @@ impl Perceptron {
     }
 
     fn forward(&self, inputs: &[f64]) -> f64 {
-        self.weights.iter().zip(inputs).map(|(w, i)| w * i).sum::<f64>() + self.bias
+        self.weights
+            .iter()
+            .zip(inputs)
+            .map(|(w, i)| w * i)
+            .sum::<f64>()
+            + self.bias
     }
- 
-   // Placeholder method for updating weights
+
+    // Placeholder method for updating weights
     fn update_weights(&mut self, learning_rate: f64, input: &[f64], error: f64) {
         for (w, &i) in self.weights.iter_mut().zip(input.iter()) {
             *w += learning_rate * error * i;
@@ -57,26 +62,32 @@ impl Graph {
 
     fn add_perceptron(&mut self, id: usize, perceptron: Perceptron) {
         self.nodes.insert(id, perceptron);
-    } 
-  
+    }
+
     fn add_new_perceptron(&mut self, id: usize, weights: Vec<f64>, bias: f64) {
         let new_perceptron = Perceptron::new(weights, bias);
         self.add_perceptron(id, new_perceptron);
     }
 
     fn connect(&mut self, from_id: usize, to_id: usize) {
-        self.edges.entry(from_id).or_insert_with(Vec::new).push(to_id);
+        self.edges
+            .entry(from_id)
+            .or_insert_with(Vec::new)
+            .push(to_id);
     }
-   fn evaluate(&self, inputs: &Vec<Vec<f64>>) -> Vec<f64> {
-        inputs.iter().map(|input| {
-            // Assuming a simplistic evaluation where we use a specific perceptron
-            let perceptron_id = 0; // For example, always using the first perceptron
-            if let Some(perceptron) = self.nodes.get(&perceptron_id) {
-                perceptron.forward(input)
-            } else {
-                0.0 // Default output if the perceptron doesn't exist
-            }
-        }).collect()
+    fn evaluate(&self, inputs: &Vec<Vec<f64>>) -> Vec<f64> {
+        inputs
+            .iter()
+            .map(|input| {
+                // Assuming a simplistic evaluation where we use a specific perceptron
+                let perceptron_id = 0; // For example, always using the first perceptron
+                if let Some(perceptron) = self.nodes.get(&perceptron_id) {
+                    perceptron.forward(input)
+                } else {
+                    0.0 // Default output if the perceptron doesn't exist
+                }
+            })
+            .collect()
     }
 
     // Placeholder for a more complex propagation mechanism
@@ -90,7 +101,27 @@ impl Graph {
             }
         }
     }
- }
+}
+
+fn vectorize(token: &str) -> Vec<f64> {
+    // Implementation of the function
+    // For example, converting each character of the token to its numeric ASCII value
+    token.bytes().map(|c| c as f64).collect()
+}
+
+fn tokenize(text: &str) -> Vec<String> {
+    text.split_whitespace()
+        .map(|s| s.to_string())
+        .collect()
+}
+
+// Function to normalize tokens to lowercase
+fn normalize(tokens: &[String]) -> Vec<String> {
+    tokens.iter()
+        .map(|s| s.to_lowercase())
+        .collect()
+}
+
 
 fn main() {
     let mut graph = Graph::new();
@@ -103,7 +134,7 @@ fn main() {
     // Start propagation from node 0 with some input
     graph.propagate(0, &[0.5, 1.5]);
 
-   let text = "Hello, World! This is an example text.";
+    let text = "Hello, World! This is an example text.";
 
     // Tokenize and normalize the text
     let tokens = tokenize(text);
@@ -148,6 +179,5 @@ fn main() {
     let new_weights = vec![0.3, 0.7];
     let new_bias = 0.2;
     graph.add_new_perceptron(2, new_weights, new_bias);
-    graph.adjust_graph();
-
+    graph.adjust_graph(true);
 }
