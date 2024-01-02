@@ -174,10 +174,17 @@ fn main() {
     if let Some(perceptron) = graph.nodes.get_mut(&0) {
         perceptron.update_weights(learning_rate, &input, error);
     }
+    let transformed_outputs_for_evaluation: Vec<Vec<f64>> = graph_outputs
+    .iter()
+    .map(|&output| vec![output])
+    .collect();
+
+    let re_evaluation_results = graph.evaluate(&transformed_outputs_for_evaluation);
+    println!("Re-Evaluation Results: {:?}", re_evaluation_results);
 
     // Example of adding a new perceptron to the graph
     let new_weights = vec![0.3, 0.7];
     let new_bias = 0.2;
-    graph.add_new_perceptron(2, new_weights, new_bias);
+    graph.add_new_perceptron(2, new_weights, new_bias); 
     graph.adjust_graph(true);
 }
