@@ -1,5 +1,27 @@
 use std::collections::HashMap;
 
+
+struct GraphInput { 
+}
+ 
+fn create_pairs(inputs: Vec<GraphInput>) -> Vec<(GraphInput, GraphInput, f64)> {
+     let mut pairs = Vec::new();
+
+    //  Pair each input with every other input
+    for i in 0..inputs.len() {
+        for j in 0..inputs.len() {
+            // Assign a label (1.0 for similar, 0.0 for different)
+            // For simplicity, consider same indices as similar
+            let label = if i == j { 1.0 } else { 0.0 };
+
+            pairs.push((inputs[i].clone(), inputs[j].clone(), label));
+        }
+    }
+
+    pairs
+}
+
+
 struct Perceptron {
     weights: Vec<f64>,
     bias: f64,
@@ -39,10 +61,31 @@ impl Graph {
             nodes: HashMap::new(),
             edges: HashMap::new(),
         }
+    } 
+   fn compare(&self, input1: &GraphInput, input2: &GraphInput) -> f64 {
+      
     }
 
+    // Training function needs to be adapted for one-shot learning
+    fn train_one_shot(&mut self, pairs: Vec<(GraphInput, GraphInput, f64)>) {
+       for (input1, input2, label) in pairs {
+            let similarity = self.compare(&input1, &input2);
+
+            // Calculate some form of loss based on the label and similarity
+            // For instance, mean squared error (MSE)
+            let loss = (label - similarity).powi(2);
+
+            // Backpropagate this loss to update the network
+            // This would involve adjusting weights based on the loss
+            // Specifics depend on your network architecture
+           // ??
+ 
+        }
+    }
+
+    
     fn adjust_graph(&mut self, adjustment_condition: bool) {
-        // Example condition for adjustment
+        //   condition for adjustment
         if adjustment_condition {
             // Example logic for adding a new node
             let new_node_id = self.nodes.len();
@@ -56,7 +99,7 @@ impl Graph {
                 self.connect(new_node_id - 1, new_node_id);
             }
 
-            // Additional logic could include removing nodes, adjusting weights, etc.
+            // removing nodes, adjusting weights, etc.
         }
     }
 
@@ -105,7 +148,7 @@ impl Graph {
 
 fn vectorize(token: &str) -> Vec<f64> {
     // Implementation of the function
-    // For example, converting each character of the token to its numeric ASCII value
+    //  converting each character of the token to its numeric ASCII value
     token.bytes().map(|c| c as f64).collect()
 }
 
@@ -126,7 +169,7 @@ fn normalize(tokens: &[String]) -> Vec<String> {
 fn main() {
     let mut graph = Graph::new();
 
-    // Example of adding perceptrons and connecting them
+    //  adding perceptrons and connecting them
     graph.add_perceptron(0, Perceptron::new(vec![1.0, 2.0], 0.5));
     graph.add_perceptron(1, Perceptron::new(vec![3.0, 4.0], 1.0));
     graph.connect(0, 1);
@@ -165,7 +208,7 @@ fn main() {
 
     // Post-processing the graph outputs
     // This could be any kind of logic, depending on your application
-    // For example, making a decision based on the outputs, aggregating them, etc.
+    // ?? making a decision based on the outputs, aggregating them, etc.
     println!("Graph Outputs: {:?}", graph_outputs);
 
     let learning_rate = 0.01;
@@ -182,7 +225,7 @@ fn main() {
     let re_evaluation_results = graph.evaluate(&transformed_outputs_for_evaluation);
     println!("Re-Evaluation Results: {:?}", re_evaluation_results);
 
-    // Example of adding a new perceptron to the graph
+    //  adding a new perceptron to the graph
     let new_weights = vec![0.3, 0.7];
     let new_bias = 0.2;
     graph.add_new_perceptron(2, new_weights, new_bias); 
